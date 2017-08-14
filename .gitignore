@@ -1,0 +1,5 @@
+.DS_Store
+Builds/MacOSX/*.xcodeproj/xcuserdata
+Builds/MacOSX/build
+Builds/MacOSX/*.xcodeproj/project.xcworkspace/xcuserdata
+Builds/LinuxMakefile/build

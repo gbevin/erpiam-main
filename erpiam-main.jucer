@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="Lti8Df" name="erpiam-main" displaySplashScreen="0" reportAppUsage="0"
+              splashScreenColour="Dark" projectType="guiapp" version="0.1.0"
+              bundleIdentifier="org.expressiveness.erpiam" includeBinaryInAppConfig="1"
+              cppLanguageStandard="11" jucerVersion="5.1.1" companyName="G.Bevin"
+              companyWebsite="http://expressiveness.org" companyEmail="">
+  <MAINGROUP id="L38QxS" name="erpiam-main">
+    <GROUP id="{C1344BD3-18CC-8012-1DC8-7E008DB01D3A}" name="Source">
+      <GROUP id="{673703D5-B006-D1AE-5967-470403277F7A}" name="UI">
+        <FILE id="EYyZWx" name="ErpiamLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/UI/ErpiamLookAndFeel.cpp"/>
+        <FILE id="pgIYed" name="ErpiamLookAndFeel.h" compile="0" resource="0"
+              file="Source/UI/ErpiamLookAndFeel.h"/>
+        <FILE id="EobprQ" name="MainComponent.cpp" compile="1" resource="0"
+              file="Source/UI/MainComponent.cpp"/>
+        <FILE id="anmjDF" name="MainComponent.h" compile="0" resource="0" file="Source/UI/MainComponent.h"/>
+        <FILE id="rXpZpN" name="MainWindow.cpp" compile="1" resource="0" file="Source/UI/MainWindow.cpp"/>
+        <FILE id="j25nx7" name="MainWindow.h" compile="0" resource="0" file="Source/UI/MainWindow.h"/>
+      </GROUP>
+      <FILE id="c1SSkr" name="ErpiamApplication.cpp" compile="1" resource="0"
+            file="Source/ErpiamApplication.cpp"/>
+      <FILE id="tuUtu3" name="ErpiamApplication.h" compile="0" resource="0"
+            file="Source/ErpiamApplication.h"/>
+      <FILE id="kNeHFE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+    <GROUP id="{FD4D0A41-2ED8-F42D-76AF-E14CC378045A}" name="Resources">
+      <GROUP id="{3974E04C-024A-C432-FC0D-15B15B027D34}" name="Fonts">
+        <FILE id="RGQ52F" name="DejaVuSans-Bold.ttf" compile="0" resource="1"
+              file="Resources/Fonts/DejaVuSans-Bold.ttf"/>
+        <FILE id="p9BEqe" name="DejaVuSans.ttf" compile="0" resource="1" file="Resources/Fonts/DejaVuSans.ttf"/>
+        <FILE id="LxnDZS" name="DejaVuSansMono-Bold.ttf" compile="0" resource="1"
+              file="Resources/Fonts/DejaVuSansMono-Bold.ttf"/>
+        <FILE id="trv85F" name="DejaVuSansMono.ttf" compile="0" resource="1"
+              file="Resources/Fonts/DejaVuSansMono.ttf"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="erpiam-main"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="erpiam-main"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="erpiam-main"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="erpiam-main"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_ALSA="enabled" JUCE_USE_CURL="enabled" JUCE_USE_XCURSOR="enabled"
+               JUCE_WEB_BROWSER="disabled" JUCE_ENABLE_LIVE_CONSTANT_EDITOR="disabled"/>
+</JUCERPROJECT>

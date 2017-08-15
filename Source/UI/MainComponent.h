@@ -66,6 +66,7 @@ private:
     //==============================================================================
     ScopedPointer<TextEditor> textEditor_;
     ScopedPointer<Label> label_;
+    ScopedPointer<Label> title_;
 
 
     //==============================================================================

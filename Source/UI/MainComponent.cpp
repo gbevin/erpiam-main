@@ -69,14 +69,24 @@ MainComponent::MainComponent ()
     textEditor_->setPopupMenuEnabled (true);
     textEditor_->setText (String());
 
-    addAndMakeVisible (label_ = new Label ("new label",
+    addAndMakeVisible (label_ = new Label (String(),
                                            String()));
     label_->setFont (Font ("DejaVu Sans Mono", 15.00f, Font::plain).withTypefaceStyle ("Book"));
     label_->setJustificationType (Justification::topLeft);
     label_->setEditable (false, false, false);
+    label_->setColour (Label::backgroundColourId, Colour (0x33333333));
     label_->setColour (Label::textColourId, Colours::black);
     label_->setColour (TextEditor::textColourId, Colours::black);
     label_->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (title_ = new Label ("new label",
+                                           TRANS("ERPIAM - Embedded Raspberry PI for Audio and MIDI")));
+    title_->setFont (Font ("DejaVu Sans", 23.00f, Font::plain).withTypefaceStyle ("Bold"));
+    title_->setJustificationType (Justification::centred);
+    title_->setEditable (false, false, false);
+    title_->setColour (Label::textColourId, Colours::black);
+    title_->setColour (TextEditor::textColourId, Colours::black);
+    title_->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -106,6 +116,7 @@ MainComponent::~MainComponent()
 
     textEditor_ = nullptr;
     label_ = nullptr;
+    title_ = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -134,8 +145,9 @@ void MainComponent::resized()
     }
     //[/UserPreResize]
 
-    textEditor_->setBounds (16, proportionOfHeight (0.5000f), 768, 224);
-    label_->setBounds (16, 16, 768, 208);
+    textEditor_->setBounds (16, 264, 768, 200);
+    label_->setBounds (16, 56, 768, 192);
+    title_->setBounds ((getWidth() / 2) - (proportionOfWidth (1.0000f) / 2), 16, proportionOfWidth (1.0000f), 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -240,7 +252,7 @@ String outputChannel(const MidiMessage& msg)
 void MainComponent::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& msg)
 {
     String txt;
-    
+
     Time t = Time::getCurrentTime();
     txt << String(t.getHours()).paddedLeft('0', 2) << ":"
     << String(t.getMinutes()).paddedLeft('0', 2) << ":"
@@ -360,15 +372,21 @@ BEGIN_JUCER_METADATA
                  initialHeight="480">
   <BACKGROUND backgroundColour="ffffffff"/>
   <TEXTEDITOR name="new text editor" id="4586c223bde2d7a" memberName="textEditor_"
-              virtualName="" explicitFocusOrder="0" pos="16 50% 768 224" initialText=""
+              virtualName="" explicitFocusOrder="0" pos="16 264 768 200" initialText=""
               multiline="1" retKeyStartsLine="1" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
-  <LABEL name="new label" id="a8aa1e160e2f09ee" memberName="label_" virtualName=""
-         explicitFocusOrder="0" pos="16 16 768 208" textCol="ff000000"
-         edTextCol="ff000000" edBkgCol="0" labelText="" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="DejaVu Sans Mono"
-         fontsize="15" kerning="0" bold="0" italic="0" justification="9"
-         typefaceStyle="Book"/>
+  <LABEL name="" id="a8aa1e160e2f09ee" memberName="label_" virtualName=""
+         explicitFocusOrder="0" pos="16 56 768 192" bkgCol="33333333"
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText=""
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="DejaVu Sans Mono" fontsize="15" kerning="0" bold="0"
+         italic="0" justification="9" typefaceStyle="Book"/>
+  <LABEL name="new label" id="c5d1e84fdedf2ad6" memberName="title_" virtualName=""
+         explicitFocusOrder="0" pos="0Cc 16 100% 32" textCol="ff000000"
+         edTextCol="ff000000" edBkgCol="0" labelText="ERPIAM - Embedded Raspberry PI for Audio and MIDI"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="DejaVu Sans" fontsize="23" kerning="0" bold="1" italic="0"
+         justification="36" typefaceStyle="Bold"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

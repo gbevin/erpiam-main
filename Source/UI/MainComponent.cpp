@@ -60,7 +60,7 @@ MainComponent::MainComponent ()
     }
     //[/Constructor_pre]
 
-    addAndMakeVisible (textEditor_ = new TextEditor ("new text editor"));
+    addAndMakeVisible (textEditor_ = new TextEditor (String()));
     textEditor_->setMultiLine (true);
     textEditor_->setReturnKeyStartsNewLine (true);
     textEditor_->setReadOnly (false);
@@ -145,8 +145,8 @@ void MainComponent::resized()
     }
     //[/UserPreResize]
 
-    textEditor_->setBounds (16, 264, 768, 200);
-    label_->setBounds (16, 56, 768, 192);
+    textEditor_->setBounds (16, 280, 768, 184);
+    label_->setBounds (16, 56, 768, 208);
     title_->setBounds ((getWidth() / 2) - (proportionOfWidth (1.0000f) / 2), 16, proportionOfWidth (1.0000f), 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -371,12 +371,11 @@ BEGIN_JUCER_METADATA
                  snapShown="0" overlayOpacity="0.330" fixedSize="1" initialWidth="800"
                  initialHeight="480">
   <BACKGROUND backgroundColour="ffffffff"/>
-  <TEXTEDITOR name="new text editor" id="4586c223bde2d7a" memberName="textEditor_"
-              virtualName="" explicitFocusOrder="0" pos="16 264 768 200" initialText=""
-              multiline="1" retKeyStartsLine="1" readonly="0" scrollbars="1"
-              caret="1" popupmenu="1"/>
+  <TEXTEDITOR name="" id="4586c223bde2d7a" memberName="textEditor_" virtualName=""
+              explicitFocusOrder="0" pos="16 280 768 184" initialText="" multiline="1"
+              retKeyStartsLine="1" readonly="0" scrollbars="1" caret="1" popupmenu="1"/>
   <LABEL name="" id="a8aa1e160e2f09ee" memberName="label_" virtualName=""
-         explicitFocusOrder="0" pos="16 56 768 192" bkgCol="33333333"
+         explicitFocusOrder="0" pos="16 56 768 208" bkgCol="33333333"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText=""
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="DejaVu Sans Mono" fontsize="15" kerning="0" bold="0"

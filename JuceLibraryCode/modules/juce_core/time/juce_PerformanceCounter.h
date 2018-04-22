@@ -20,8 +20,8 @@
   ==============================================================================
 */
 
-#pragma once
-
+namespace juce
+{
 
 //==============================================================================
 /** A timer for measuring performance of code and dumping the results to a file.
@@ -43,6 +43,8 @@
     In this example, the time of each period between calling start/stop will be
     measured and averaged over 50 runs, and the results printed to a file
     every 50 times round the loop.
+
+    @tags{Core}
 */
 class JUCE_API  PerformanceCounter
 {
@@ -131,15 +133,17 @@ private:
             doSomething();
         }
 
-        Logger::writeToLog (String ("doSomething() took ") + String (timeSec) + "seconds");
+        Logger::writeToLog ("doSomething() took " + String (timeSec) + "seconds");
     }
 
     @param resultInSeconds The result of the measurement will be stored in this variable.
+
+    @tags{Core}
 */
 class JUCE_API  ScopedTimeMeasurement
 {
 public:
-    ScopedTimeMeasurement (double& resultInSeconds)
+    ScopedTimeMeasurement (double& resultInSeconds) noexcept
         : result (resultInSeconds)
     {
         result = 0.0;
@@ -154,4 +158,8 @@ public:
 private:
     int64 startTimeTicks = Time::getHighResolutionTicks();
     double& result;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopedTimeMeasurement)
 };
+
+} // namespace juce

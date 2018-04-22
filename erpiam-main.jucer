@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Lti8Df" name="erpiam-main" displaySplashScreen="0" reportAppUsage="0"
-              splashScreenColour="Dark" projectType="guiapp" version="0.1.0"
+              splashScreenColour="Dark" projectType="guiapp" version="0.2.0"
               bundleIdentifier="org.expressiveness.erpiam" includeBinaryInAppConfig="1"
-              cppLanguageStandard="11" jucerVersion="5.1.1" companyName="G.Bevin"
+              cppLanguageStandard="14" jucerVersion="5.3.1" companyName="G.Bevin"
               companyWebsite="http://expressiveness.org" companyEmail="">
   <MAINGROUP id="L38QxS" name="erpiam-main">
     <GROUP id="{C1344BD3-18CC-8012-1DC8-7E008DB01D3A}" name="Source">
@@ -86,6 +86,6 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_ALSA="enabled" JUCE_USE_CURL="enabled" JUCE_USE_XCURSOR="enabled"
-               JUCE_WEB_BROWSER="disabled" JUCE_ENABLE_LIVE_CONSTANT_EDITOR="disabled"/>
+  <JUCEOPTIONS JUCE_ALSA="1" JUCE_USE_CURL="1" JUCE_USE_XCURSOR="1" JUCE_WEB_BROWSER="0"
+               JUCE_ENABLE_LIVE_CONSTANT_EDITOR="0"/>
 </JUCERPROJECT>

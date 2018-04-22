@@ -20,7 +20,8 @@
   ==============================================================================
 */
 
-#pragma once
+namespace juce
+{
 
 class UnitTestRunner;
 
@@ -62,6 +63,8 @@ class UnitTestRunner;
     To run a test, use the UnitTestRunner class.
 
     @see UnitTestRunner
+
+    @tags{Core}
 */
 class JUCE_API  UnitTest
 {
@@ -297,9 +300,8 @@ private:
     }
 
     //==============================================================================
-    const String name;
-    const String category;
-    UnitTestRunner* runner;
+    const String name, category;
+    UnitTestRunner* runner = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE (UnitTest)
 };
@@ -316,6 +318,8 @@ private:
     perform custom behaviour when each test completes.
 
     @see UnitTest
+
+    @tags{Core}
 */
 class JUCE_API  UnitTestRunner
 {
@@ -417,10 +421,10 @@ private:
     //==============================================================================
     friend class UnitTest;
 
-    UnitTest* currentTest;
+    UnitTest* currentTest = nullptr;
     String currentSubCategory;
-    OwnedArray <TestResult, CriticalSection> results;
-    bool assertOnFailure, logPasses;
+    OwnedArray<TestResult, CriticalSection> results;
+    bool assertOnFailure = true, logPasses = false;
     Random randomForTest;
 
     void beginNewTest (UnitTest* test, const String& subCategory);
@@ -431,3 +435,5 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE (UnitTestRunner)
 };
+
+} // namespace juce

@@ -24,6 +24,13 @@
   ==============================================================================
 */
 
+#if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+ #include <juce_audio_plugin_client/AAX/juce_AAX_Modifier_Injector.h>
+#endif
+
+namespace juce
+{
+
 #undef GetSystemMetrics // multimon overrides this for some reason and causes a mess..
 
 // these are in the windows SDK, but need to be repeated here for GCC..
@@ -41,10 +48,6 @@
  #define WM_APPCOMMAND                     0x0319
 #endif
 
-#if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
- #include <juce_audio_plugin_client/AAX/juce_AAX_Modifier_Injector.h>
-#endif
-
 extern void juce_repeatLastProcessPriority();
 extern void juce_checkCurrentlyFocusedTopLevelWindow();  // in juce_TopLevelWindow.cpp
 extern bool juce_isRunningInWine();
@@ -57,6 +60,46 @@ static bool shouldDeactivateTitleBar = true;
 extern void* getUser32Function (const char*);
 
 //==============================================================================
+#ifndef WM_TOUCH
+ enum
+ {
+     WM_TOUCH         = 0x0240,
+     TOUCHEVENTF_MOVE = 0x0001,
+     TOUCHEVENTF_DOWN = 0x0002,
+     TOUCHEVENTF_UP   = 0x0004
+ };
+
+ typedef HANDLE HTOUCHINPUT;
+ typedef HANDLE HGESTUREINFO;
+
+ struct TOUCHINPUT
+ {
+     LONG         x;
+     LONG         y;
+     HANDLE       hSource;
+     DWORD        dwID;
+     DWORD        dwFlags;
+     DWORD        dwMask;
+     DWORD        dwTime;
+     ULONG_PTR    dwExtraInfo;
+     DWORD        cxContact;
+     DWORD        cyContact;
+ };
+
+ struct GESTUREINFO
+ {
+     UINT         cbSize;
+     DWORD        dwFlags;
+     DWORD        dwID;
+     HWND         hwndTarget;
+     POINTS       ptsLocation;
+     DWORD        dwInstanceID;
+     DWORD        dwSequenceID;
+     ULONGLONG    ullArguments;
+     UINT         cbExtraArgs;
+ };
+#endif
+
 #ifndef WM_NCPOINTERUPDATE
  enum
  {
@@ -260,6 +303,9 @@ static void checkForPointerAPI()
                      && getPointerPenInfo      != nullptr);
 }
 
+typedef void (*SettingChangeCallbackFunc) (void);
+extern SettingChangeCallbackFunc settingChangeCallback;
+
 static Rectangle<int> rectangleFromRECT (const RECT& r) noexcept
 {
     return Rectangle<int>::leftTopRightBottom ((int) r.left, (int) r.top, (int) r.right, (int) r.bottom);
@@ -389,6 +435,26 @@ const int KeyPress::F13Key                  = VK_F13            | extendedKeyMod
 const int KeyPress::F14Key                  = VK_F14            | extendedKeyModifier;
 const int KeyPress::F15Key                  = VK_F15            | extendedKeyModifier;
 const int KeyPress::F16Key                  = VK_F16            | extendedKeyModifier;
+const int KeyPress::F17Key                  = VK_F17            | extendedKeyModifier;
+const int KeyPress::F18Key                  = VK_F18            | extendedKeyModifier;
+const int KeyPress::F19Key                  = VK_F19            | extendedKeyModifier;
+const int KeyPress::F20Key                  = VK_F20            | extendedKeyModifier;
+const int KeyPress::F21Key                  = VK_F21            | extendedKeyModifier;
+const int KeyPress::F22Key                  = VK_F22            | extendedKeyModifier;
+const int KeyPress::F23Key                  = VK_F23            | extendedKeyModifier;
+const int KeyPress::F24Key                  = VK_F24            | extendedKeyModifier;
+const int KeyPress::F25Key                  = 0x31000;          // Windows doesn't support F-keys 25 or higher
+const int KeyPress::F26Key                  = 0x31001;
+const int KeyPress::F27Key                  = 0x31002;
+const int KeyPress::F28Key                  = 0x31003;
+const int KeyPress::F29Key                  = 0x31004;
+const int KeyPress::F30Key                  = 0x31005;
+const int KeyPress::F31Key                  = 0x31006;
+const int KeyPress::F32Key                  = 0x31007;
+const int KeyPress::F33Key                  = 0x31008;
+const int KeyPress::F34Key                  = 0x31009;
+const int KeyPress::F35Key                  = 0x3100a;
+
 const int KeyPress::numberPad0              = VK_NUMPAD0        | extendedKeyModifier;
 const int KeyPress::numberPad1              = VK_NUMPAD1        | extendedKeyModifier;
 const int KeyPress::numberPad2              = VK_NUMPAD2        | extendedKeyModifier;
@@ -554,6 +620,7 @@ private:
 };
 
 //==============================================================================
+Image createSnapshotOfNativeWindow (void*);
 Image createSnapshotOfNativeWindow (void* nativeWindowHandle)
 {
     auto hwnd = (HWND) nativeWindowHandle;
@@ -575,72 +642,116 @@ Image createSnapshotOfNativeWindow (void* nativeWindowHandle)
 //==============================================================================
 namespace IconConverters
 {
-    Image createImageFromHBITMAP (HBITMAP bitmap)
-    {
-        Image im;
-
-        if (bitmap != 0)
-        {
-            BITMAP bm;
-
-            if (GetObject (bitmap, sizeof (BITMAP), &bm)
-                 && bm.bmWidth > 0 && bm.bmHeight > 0)
-            {
-                auto tempDC = GetDC (0);
-                auto dc = CreateCompatibleDC (tempDC);
-                ReleaseDC (0, tempDC);
-
-                SelectObject (dc, bitmap);
-
-                im = Image (Image::ARGB, bm.bmWidth, bm.bmHeight, true);
-                Image::BitmapData imageData (im, Image::BitmapData::writeOnly);
-
-                for (int y = bm.bmHeight; --y >= 0;)
-                {
-                    for (int x = bm.bmWidth; --x >= 0;)
-                    {
-                        auto col = GetPixel (dc, x, y);
-
-                        imageData.setPixelColour (x, y, Colour ((uint8) GetRValue (col),
-                                                                (uint8) GetGValue (col),
-                                                                (uint8) GetBValue (col)));
-                    }
-                }
-
-                DeleteDC (dc);
-            }
-        }
-
-        return im;
-    }
-
     Image createImageFromHICON (HICON icon)
     {
-        ICONINFO info;
+        if (icon == nullptr)
+            return {};
 
-        if (GetIconInfo (icon, &info))
+        struct ScopedICONINFO   : public ICONINFO
         {
-            auto mask  = createImageFromHBITMAP (info.hbmMask);
-            auto image = createImageFromHBITMAP (info.hbmColor);
-
-            if (mask.isValid() && image.isValid())
+            ScopedICONINFO()
             {
-                for (int y = image.getHeight(); --y >= 0;)
-                {
-                    for (int x = image.getWidth(); --x >= 0;)
-                    {
-                        auto brightness = mask.getPixelAt (x, y).getBrightness();
+                hbmColor = nullptr;
+                hbmMask = nullptr;
+            }
 
-                        if (brightness > 0.0f)
-                            image.multiplyAlphaAt (x, y, 1.0f - brightness);
-                    }
+            ~ScopedICONINFO()
+            {
+                if (hbmColor != nullptr)
+                    ::DeleteObject (hbmColor);
+
+                if (hbmMask != nullptr)
+                    ::DeleteObject (hbmMask);
+            }
+        };
+
+        ScopedICONINFO info;
+
+        if (! SUCCEEDED (::GetIconInfo (icon, &info)))
+            return {};
+
+        BITMAP bm;
+
+        if (! (::GetObject (info.hbmColor, sizeof (BITMAP), &bm)
+               && bm.bmWidth > 0 && bm.bmHeight > 0))
+            return {};
+
+        if (auto* tempDC = ::GetDC (nullptr))
+        {
+            if (auto* dc = ::CreateCompatibleDC (tempDC))
+            {
+                BITMAPV5HEADER header = { 0 };
+                header.bV5Size = sizeof (BITMAPV5HEADER);
+                header.bV5Width = bm.bmWidth;
+                header.bV5Height = -bm.bmHeight;
+                header.bV5Planes = 1;
+                header.bV5Compression = BI_RGB;
+                header.bV5BitCount = 32;
+                header.bV5RedMask = 0x00FF0000;
+                header.bV5GreenMask = 0x0000FF00;
+                header.bV5BlueMask = 0x000000FF;
+                header.bV5AlphaMask = 0xFF000000;
+                header.bV5CSType = LCS_WINDOWS_COLOR_SPACE;
+                header.bV5Intent = LCS_GM_IMAGES;
+
+                uint32* bitmapImageData = nullptr;
+
+                if (auto* dib = ::CreateDIBSection (tempDC, (BITMAPINFO*) &header, DIB_RGB_COLORS,
+                                                    (void**) &bitmapImageData, nullptr, 0))
+                {
+                    auto oldObject = ::SelectObject (dc, dib);
+
+                    auto numPixels = bm.bmWidth * bm.bmHeight;
+                    auto numColourComponents = numPixels * 4;
+
+                    // Windows icon data comes as two layers, an XOR mask which contains the bulk
+                    // of the image data and an AND mask which provides the transparency. Annoyingly
+                    // the XOR mask can also contain an alpha channel, in which case the transparency
+                    // mask should not be applied, but there's no way to find out a priori if the XOR
+                    // mask contains an alpha channel.
+
+                    HeapBlock<bool> opacityMask (numPixels);
+                    memset (bitmapImageData, 0, numColourComponents);
+                    ::DrawIconEx (dc, 0, 0, icon, bm.bmWidth, bm.bmHeight, 0, nullptr, DI_MASK);
+
+                    for (int i = 0; i < numPixels; ++i)
+                        opacityMask[i] = (bitmapImageData[i] == 0);
+
+                    Image result = Image (Image::ARGB, bm.bmWidth, bm.bmHeight, true);
+                    Image::BitmapData imageData (result, Image::BitmapData::readWrite);
+
+                    memset (bitmapImageData, 0, numColourComponents);
+                    ::DrawIconEx (dc, 0, 0, icon, bm.bmWidth, bm.bmHeight, 0, nullptr, DI_NORMAL);
+                    memcpy (imageData.data, bitmapImageData, numColourComponents);
+
+                    auto imageHasAlphaChannel = [&imageData, numPixels]()
+                    {
+                        for (int i = 0; i < numPixels; ++i)
+                            if (imageData.data[i * 4] != 0)
+                                return true;
+
+                        return false;
+                    };
+
+                    if (! imageHasAlphaChannel())
+                        for (int i = 0; i < numPixels; ++i)
+                            imageData.data[i * 4] = opacityMask[i] ? 0xff : 0x00;
+
+                    ::SelectObject (dc, oldObject);
+                    ::DeleteObject(dib);
+                    ::DeleteDC (dc);
+                    ::ReleaseDC (nullptr, tempDC);
+
+                    return result;
                 }
 
-                return image;
+                ::DeleteDC (dc);
             }
+
+            ::ReleaseDC (nullptr, tempDC);
         }
 
-        return Image();
+        return {};
     }
 
     HICON createHICONFromImage (const Image& image, const BOOL isIcon, int hotspotX, int hotspotY)
@@ -691,12 +802,17 @@ struct OnScreenKeyboard   : public DeletedAtShutdown,
         startTimer (10);
     }
 
-    juce_DeclareSingleton_SingleThreaded (OnScreenKeyboard, true)
+    JUCE_DECLARE_SINGLETON_SINGLETHREADED (OnScreenKeyboard, false)
 
 private:
     OnScreenKeyboard()
     {
         tipInvocation.CoCreateInstance (ITipInvocation::getCLSID(), CLSCTX_INPROC_HANDLER | CLSCTX_LOCAL_SERVER);
+    }
+
+    ~OnScreenKeyboard()
+    {
+        clearSingletonInstance();
     }
 
     void timerCallback() override
@@ -739,7 +855,7 @@ private:
     ComSmartPtr<ITipInvocation> tipInvocation;
 };
 
-juce_ImplementSingleton_SingleThreaded (OnScreenKeyboard)
+JUCE_IMPLEMENT_SINGLETON (OnScreenKeyboard)
 
 //==============================================================================
 struct HSTRING_PRIVATE;
@@ -900,6 +1016,7 @@ public:
     ~HWNDComponentPeer()
     {
         shadower = nullptr;
+        currentTouches.deleteAllTouchesForPeer (this);
 
         // do this before the next bit to avoid messages arriving for this window
         // before it's destroyed
@@ -1116,8 +1233,8 @@ public:
     {
         auto r = getWindowRect (hwnd);
 
-        if (! (isPositiveAndBelow (localPos.x, (int) (r.right - r.left))
-                && isPositiveAndBelow (localPos.y, (int) (r.bottom - r.top))))
+        if (! (isPositiveAndBelow (localPos.x, r.right - r.left)
+                && isPositiveAndBelow (localPos.y, r.bottom - r.top)))
             return false;
 
         POINT p = { localPos.x + r.left + windowBorder.getLeft(),
@@ -1541,7 +1658,7 @@ private:
 
         LPCTSTR getWindowClassName() const noexcept     { return (LPCTSTR) (pointer_sized_uint) atom; }
 
-        juce_DeclareSingleton_SingleThreaded_Minimal (WindowClassHolder)
+        JUCE_DECLARE_SINGLETON_SINGLETHREADED_MINIMAL (WindowClassHolder)
 
     private:
         ATOM atom;
@@ -1701,6 +1818,11 @@ private:
             setMessageFilter();
             updateBorderSize();
             checkForPointerAPI();
+
+            // This is needed so that our plugin window gets notified of WM_SETTINGCHANGE messages
+            // and can respond to display scale changes
+            if (! JUCEApplication::isStandaloneApp())
+                settingChangeCallback = forceDisplayUpdate;
 
             // Calling this function here is (for some reason) necessary to make Windows
             // correctly enable the menu items that we specify in the wm_initmenu message.
@@ -2295,7 +2417,7 @@ private:
     {
         auto isCancel = false;
 
-        const auto touchIndex = currentTouches.getIndexOfTouch (touch.dwID);
+        const auto touchIndex = currentTouches.getIndexOfTouch (this, touch.dwID);
         const auto time = getMouseEventTime();
         const auto pos = globalToLocal ({ touch.x / 100.0f, touch.y / 100.0f });
         const auto pressure = touchPressure;
@@ -2316,6 +2438,7 @@ private:
         else if (isUp)
         {
             modsToSend = modsToSend.withoutMouseButtons();
+            currentModifiers = modsToSend;
             currentTouches.clearTouch (touchIndex);
 
             if (! currentTouches.areAnyTouchesActive())
@@ -2435,6 +2558,7 @@ private:
         else if (isUp || ! (pInfoFlags & POINTER_FLAG_INCONTACT))
         {
             modsToSend = modsToSend.withoutMouseButtons();
+            currentModifiers = currentModifiers.withoutMouseButtons();
         }
 
         handleMouseEvent (MouseInputSource::InputSourceType::pen, pos, modsToSend, pressure,
@@ -2544,6 +2668,14 @@ private:
             case VK_F14:
             case VK_F15:
             case VK_F16:
+            case VK_F17:
+            case VK_F18:
+            case VK_F19:
+            case VK_F20:
+            case VK_F21:
+            case VK_F22:
+            case VK_F23:
+            case VK_F24:
                 used = handleKeyUpOrDown (true);
                 used = handleKeyPress (extendedKeyModifier | (int) key, 0) || used;
                 break;
@@ -2580,8 +2712,7 @@ private:
     {
         updateKeyModifiers();
 
-        juce_wchar textChar = (juce_wchar) key;
-
+        auto textChar = (juce_wchar) key;
         const int virtualScanCode = (flags >> 16) & 0xff;
 
         if (key >= '0' && key <= '9')
@@ -2840,17 +2971,21 @@ private:
 
     void doSettingChange()
     {
-        auto& desktop = Desktop::getInstance();
-
-        const_cast<Desktop::Displays&> (desktop.getDisplays()).refresh();
+        forceDisplayUpdate();
 
         if (fullScreen && ! isMinimised())
         {
-            auto& display = desktop.getDisplays().getDisplayContaining (component.getScreenBounds().getCentre());
+            auto& display = Desktop::getInstance().getDisplays()
+                           .getDisplayContaining (component.getScreenBounds().getCentre());
 
             setWindowPos (hwnd, display.userArea * display.scale,
                           SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOSENDCHANGING);
         }
+    }
+
+    static void forceDisplayUpdate()
+    {
+        const_cast<Desktop::Displays&> (Desktop::getInstance().getDisplays()).refresh();
     }
 
     void handleDPIChange() // happens when a window moves to a screen with a different DPI.
@@ -2930,8 +3065,7 @@ private:
                 return 0;
 
             case WM_NCPAINT:
-                if (wParam != 1) // (1 = a repaint of the entire NC region)
-                    handlePaintMessage(); // this must be done, even with native titlebars, or there are rendering artifacts.
+                handlePaintMessage(); // this must be done, even with native titlebars, or there are rendering artifacts.
 
                 if (hasTitleBar())
                     break; // let the DefWindowProc handle drawing the frame.
@@ -3313,7 +3447,7 @@ private:
                     compositionRange.setLength (0);
 
                     target->setHighlightedRegion (Range<int>::emptyRange (compositionRange.getEnd()));
-                    target->setTemporaryUnderlining (Array<Range<int> >());
+                    target->setTemporaryUnderlining ({});
                 }
 
                 if (auto hImc = ImmGetContext (hWnd))
@@ -3341,7 +3475,7 @@ private:
                                                  Range<int>::emptyRange (-1));
 
                         reset();
-                        target->setTemporaryUnderlining (Array<Range<int> >());
+                        target->setTemporaryUnderlining ({});
                     }
                     else if ((lParam & GCS_COMPSTR) != 0) // (composition is still in-progress)
                     {
@@ -3381,7 +3515,7 @@ private:
                 HeapBlock<TCHAR> buffer;
                 buffer.calloc (stringSizeBytes / sizeof (TCHAR) + 1);
                 ImmGetCompositionString (hImc, type, buffer, (DWORD) stringSizeBytes);
-                return String (buffer);
+                return String (buffer.get());
             }
 
             return {};
@@ -3419,7 +3553,7 @@ private:
                 if (attributeSizeBytes > 0)
                 {
                     // Get attributes (8 bit flag per character):
-                    HeapBlock<char> attributes ((size_t) attributeSizeBytes);
+                    HeapBlock<char> attributes (attributeSizeBytes);
                     ImmGetCompositionString (hImc, GCS_COMPATTR, attributes, (DWORD) attributeSizeBytes);
 
                     selectionStart = 0;
@@ -3516,8 +3650,7 @@ JUCE_API ComponentPeer* createNonRepaintingEmbeddedWindowsPeer (Component& compo
 }
 
 
-juce_ImplementSingleton_SingleThreaded (HWNDComponentPeer::WindowClassHolder)
-
+JUCE_IMPLEMENT_SINGLETON (HWNDComponentPeer::WindowClassHolder)
 
 //==============================================================================
 void ModifierKeys::updateCurrentModifiers() noexcept
@@ -4052,7 +4185,7 @@ void* MouseCursor::createStandardMouseCursor (const MouseCursor::StandardCursorT
                       16,0,0,2,52,148,47,0,200,185,16,130,90,12,74,139,107,84,123,39,132,117,151,116,132,146,248,60,209,138,
                       98,22,203,114,34,236,37,52,77,217,247,154,191,119,110,240,193,128,193,95,163,56,60,234,98,135,2,0,59 };
 
-                dragHandCursor = CustomMouseCursorInfo (ImageFileFormat::loadFrom (dragHandData, sizeof (dragHandData)), 8, 7).create();
+                dragHandCursor = CustomMouseCursorInfo (ImageFileFormat::loadFrom (dragHandData, sizeof (dragHandData)), { 8, 7 }).create();
             }
 
             return dragHandCursor;
@@ -4070,7 +4203,7 @@ void* MouseCursor::createStandardMouseCursor (const MouseCursor::StandardCursorT
                   252,114,147,74,83,5,50,68,147,208,217,16,71,149,252,124,5,0,59,0,0 };
                 const int copyCursorSize = 119;
 
-                copyCursor = CustomMouseCursorInfo (ImageFileFormat::loadFrom (copyCursorData, copyCursorSize), 1, 3).create();
+                copyCursor = CustomMouseCursorInfo (ImageFileFormat::loadFrom (copyCursorData, copyCursorSize), { 1, 3 }).create();
             }
 
             return copyCursor;
@@ -4105,3 +4238,5 @@ void MouseCursor::showInAllWindows() const
 {
     showInWindow (nullptr);
 }
+
+} // namespace juce

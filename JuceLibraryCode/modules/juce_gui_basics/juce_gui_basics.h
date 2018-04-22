@@ -35,15 +35,15 @@
 
   ID:               juce_gui_basics
   vendor:           juce
-  version:          5.1.1
+  version:          5.3.1
   name:             JUCE GUI core classes
   description:      Basic user-interface components and related classes.
   website:          http://www.juce.com/juce
   license:          GPL/Commercial
 
-  dependencies:     juce_events juce_graphics juce_data_structures
+  dependencies:     juce_graphics juce_data_structures
   OSXFrameworks:    Cocoa Carbon QuartzCore
-  iOSFrameworks:    UIKit
+  iOSFrameworks:    UIKit MobileCoreServices
   linuxPackages:    x11 xinerama xext
 
  END_JUCE_MODULE_DECLARATION
@@ -67,7 +67,8 @@
  #define JUCE_ENABLE_REPAINT_DEBUGGING 0
 #endif
 
-/** JUCE_USE_XRANDR: Enables Xrandr multi-monitor support (Linux only).
+/** Config: JUCE_USE_XRANDR
+    Enables Xrandr multi-monitor support (Linux only).
     Unless you specifically want to disable this, it's best to leave this option turned on.
     Note that your users do not need to have Xrandr installed for your JUCE app to run, as
     the availability of Xrandr is queried during runtime.
@@ -76,7 +77,8 @@
  #define JUCE_USE_XRANDR 1
 #endif
 
-/** JUCE_USE_XINERAMA: Enables Xinerama multi-monitor support (Linux only).
+/** Config: JUCE_USE_XINERAMA
+    Enables Xinerama multi-monitor support (Linux only).
     Unless you specifically want to disable this, it's best to leave this option turned on.
     This will be used as a fallback if JUCE_USE_XRANDR not set or libxrandr cannot be found.
     Note that your users do not need to have Xinerama installed for your JUCE app to run, as
@@ -112,51 +114,48 @@
 //==============================================================================
 namespace juce
 {
+    class Component;
+    class LookAndFeel;
+    class MouseInputSource;
+    class MouseInputSourceInternal;
+    class ComponentPeer;
+    class MouseEvent;
+    struct MouseWheelDetails;
+    struct PenDetails;
+    class ToggleButton;
+    class TextButton;
+    class AlertWindow;
+    class TextLayout;
+    class ScrollBar;
+    class ComboBox;
+    class Button;
+    class FilenameComponent;
+    class ResizableWindow;
+    class MenuBarComponent;
+    class GlyphArrangement;
+    class TableHeaderComponent;
+    class Toolbar;
+    class PopupMenu;
+    class ProgressBar;
+    class FileBrowserComponent;
+    class DirectoryContentsDisplayComponent;
+    class FilePreviewComponent;
+    class CallOutBox;
+    class Drawable;
+    class DrawablePath;
+    class DrawableComposite;
+    class CaretComponent;
+    class KeyPressMappingSet;
+    class ApplicationCommandManagerListener;
+    class DrawableButton;
 
-class Component;
-class LookAndFeel;
-class MouseInputSource;
-class MouseInputSourceInternal;
-class ComponentPeer;
-class MarkerList;
-class RelativeRectangle;
-class MouseEvent;
-struct MouseWheelDetails;
-struct PenDetails;
-class ToggleButton;
-class TextButton;
-class AlertWindow;
-class TextLayout;
-class ScrollBar;
-class ComboBox;
-class Button;
-class FilenameComponent;
-class DocumentWindow;
-class ResizableWindow;
-class GroupComponent;
-class MenuBarComponent;
-class DropShadower;
-class GlyphArrangement;
-class PropertyComponent;
-class TableHeaderComponent;
-class Toolbar;
-class ToolbarItemComponent;
-class PopupMenu;
-class ProgressBar;
-class FileBrowserComponent;
-class DirectoryContentsDisplayComponent;
-class FilePreviewComponent;
-class ImageButton;
-class CallOutBox;
-class Drawable;
-class DrawablePath;
-class DrawableComposite;
-class CaretComponent;
-class BubbleComponent;
-class KeyPressMappingSet;
-class ApplicationCommandManagerListener;
-class DrawableButton;
-class FlexBox;
+   #if JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS
+    class FlexBox;
+    #if JUCE_HAS_CONSTEXPR
+     class Grid;
+    #endif
+   #endif
+}
 
 #include "mouse/juce_MouseCursor.h"
 #include "mouse/juce_MouseListener.h"
@@ -244,6 +243,7 @@ class FlexBox;
 #include "widgets/juce_ToolbarItemComponent.h"
 #include "widgets/juce_ToolbarItemFactory.h"
 #include "widgets/juce_ToolbarItemPalette.h"
+#include "menus/juce_BurgerMenuComponent.h"
 #include "buttons/juce_ToolbarButton.h"
 #include "misc/juce_DropShadower.h"
 #include "misc/juce_JUCESplashScreen.h"
@@ -259,6 +259,7 @@ class FlexBox;
 #include "windows/juce_ThreadWithProgressWindow.h"
 #include "windows/juce_TooltipWindow.h"
 #include "layout/juce_MultiDocumentPanel.h"
+#include "layout/juce_SidePanel.h"
 #include "filebrowser/juce_FileBrowserListener.h"
 #include "filebrowser/juce_DirectoryContentsList.h"
 #include "filebrowser/juce_DirectoryContentsDisplayComponent.h"
@@ -271,6 +272,7 @@ class FlexBox;
 #include "filebrowser/juce_FileSearchPathListComponent.h"
 #include "filebrowser/juce_FileTreeComponent.h"
 #include "filebrowser/juce_ImagePreviewComponent.h"
+#include "filebrowser/juce_ContentSharer.h"
 #include "properties/juce_PropertyComponent.h"
 #include "properties/juce_BooleanPropertyComponent.h"
 #include "properties/juce_ButtonPropertyComponent.h"
@@ -278,6 +280,7 @@ class FlexBox;
 #include "properties/juce_PropertyPanel.h"
 #include "properties/juce_SliderPropertyComponent.h"
 #include "properties/juce_TextPropertyComponent.h"
+#include "properties/juce_MultiChoicePropertyComponent.h"
 #include "application/juce_Application.h"
 #include "misc/juce_BubbleComponent.h"
 #include "lookandfeel/juce_LookAndFeel.h"
@@ -293,8 +296,11 @@ class FlexBox;
 
 // these classes are C++11-only
 #if JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS
-#include "layout/juce_FlexItem.h"
-#include "layout/juce_FlexBox.h"
-#endif
+ #include "layout/juce_FlexItem.h"
+ #include "layout/juce_FlexBox.h"
 
-}
+ #if JUCE_HAS_CONSTEXPR
+  #include "layout/juce_GridItem.h"
+  #include "layout/juce_Grid.h"
+ #endif
+#endif

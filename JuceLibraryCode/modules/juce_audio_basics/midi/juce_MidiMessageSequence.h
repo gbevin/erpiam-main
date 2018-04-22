@@ -20,8 +20,8 @@
   ==============================================================================
 */
 
-#pragma once
-
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -31,6 +31,8 @@
     written to a standard midi file.
 
     @see MidiMessage, MidiFile
+
+    @tags{Audio}
 */
 class JUCE_API  MidiMessageSequence
 {
@@ -294,3 +296,5 @@ private:
 
     JUCE_LEAK_DETECTOR (MidiMessageSequence)
 };
+
+} // namespace juce

@@ -114,7 +114,7 @@
 					650915E48E7FD6BE9CAC8042,
 					B40F237411D690E9C4F3BE4F,
 					4B332C2495D40431190264BA,
-					BB95A04A9356888871E6D7F0, ); name = "Juce Modules"; sourceTree = "<group>"; };
+					BB95A04A9356888871E6D7F0, ); name = "JUCE Modules"; sourceTree = "<group>"; };
 		9CE26A0306C1440BB1F906CE = {isa = PBXGroup; children = (
 					8AE8A7D98BB4E965DE00FA5A,
 					3E91BF28F43275CB6FFAC733,
@@ -129,7 +129,7 @@
 					4D9F58ABAAE6DE6E7E48EDCE,
 					563ABCECE8586FAD781B0ED9,
 					0B5AB7B565D583ED327EF439,
-					32E6CF3D6A7585F7579E6D23, ); name = "Juce Library Code"; sourceTree = "<group>"; };
+					32E6CF3D6A7585F7579E6D23, ); name = "JUCE Library Code"; sourceTree = "<group>"; };
 		2E1011B5C04A709969A46A51 = {isa = PBXGroup; children = (
 					00612B32DC49A5B1A0D3553B,
 					670BB1CFA797B720C2C14D2D, ); name = Resources; sourceTree = "<group>"; };
@@ -153,7 +153,7 @@
 					96E77B4C3553668A78B2530D,
 					06402D38E34BFB5A99A8D7F3, ); name = Source; sourceTree = "<group>"; };
 		C65E5532AB5C48218BCA645F = {isa = XCBuildConfiguration; buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
@@ -164,8 +164,8 @@
 					"_DEBUG=1",
 					"DEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=0.1.0",
-					"JUCE_APP_VERSION_HEX=0x100",
+					"JUCE_APP_VERSION=0.2.0",
+					"JUCE_APP_VERSION_HEX=0x200",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=0",
@@ -184,7 +184,7 @@
 				SDKROOT_ppc = macosx10.5;
 				USE_HEADERMAP = NO; }; name = Debug; };
 		B9CC36BC6CB4A3F65FEAB6CC = {isa = XCBuildConfiguration; buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
@@ -195,8 +195,8 @@
 					"_NDEBUG=1",
 					"NDEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=0.1.0",
-					"JUCE_APP_VERSION_HEX=0x100",
+					"JUCE_APP_VERSION=0.2.0",
+					"JUCE_APP_VERSION_HEX=0x200",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=0",
@@ -210,6 +210,7 @@
 				INFOPLIST_FILE = Info-App.plist;
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				PRODUCT_BUNDLE_IDENTIFIER = org.expressiveness.erpiam;
@@ -329,7 +330,7 @@
 					40D7D2A94B30B8B9F36D89B1,
 					8CC4AD4EF5A5AE4488D8B449,
 					1F7F43BC0AFD5364C5BC44D8, ); buildRules = ( ); dependencies = (  ); name = "erpiam-main - App"; productName = "erpiam-main"; productReference = E4443618AD3D5B6594975D75; productType = "com.apple.product-type.application"; };
-		D565B6792F24ECCFEA0FCB25 = {isa = PBXProject; buildConfigurationList = DCAE15EA6914D87F766D173F; attributes = { LastUpgradeCheck = 0830; TargetAttributes = { 9AE6BFB01839696056ABCCCE = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; }; }; }; compatibilityVersion = "Xcode 3.2"; hasScannedForEncodings = 0; mainGroup = F392754712062404041B60BF; projectDirPath = ""; projectRoot = ""; targets = (9AE6BFB01839696056ABCCCE); };
+		D565B6792F24ECCFEA0FCB25 = {isa = PBXProject; buildConfigurationList = DCAE15EA6914D87F766D173F; attributes = { LastUpgradeCheck = 0830; ORGANIZATIONNAME = "G.Bevin"; TargetAttributes = { 9AE6BFB01839696056ABCCCE = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; }; }; }; compatibilityVersion = "Xcode 3.2"; hasScannedForEncodings = 0; mainGroup = F392754712062404041B60BF; projectDirPath = ""; projectRoot = ""; targets = (9AE6BFB01839696056ABCCCE); };
 	};
 	rootObject = D565B6792F24ECCFEA0FCB25;
 }

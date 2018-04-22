@@ -24,8 +24,8 @@
   ==============================================================================
 */
 
-#pragma once
-
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -40,6 +40,8 @@
     sensible results.
 
     @see Point, Rectangle, Path, Graphics::drawLine
+
+    @tags{Graphics}
 */
 template <typename ValueType>
 class Line
@@ -424,3 +426,5 @@ private:
         return isZeroToOne (along2);
     }
 };
+
+} // namespace juce

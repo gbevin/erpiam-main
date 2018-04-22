@@ -20,8 +20,8 @@
   ==============================================================================
 */
 
-#pragma once
-
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -74,7 +74,9 @@
     };
 
     @endcode
- */
+
+    @tags{Core}
+*/
 template <typename SharedObjectType>
 class SharedResourcePointer
 {
@@ -158,3 +160,5 @@ private:
 
     JUCE_LEAK_DETECTOR (SharedResourcePointer)
 };
+
+} // namespace juce

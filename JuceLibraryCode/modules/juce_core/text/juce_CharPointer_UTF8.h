@@ -20,15 +20,18 @@
   ==============================================================================
 */
 
-#pragma once
+namespace juce
+{
 
 //==============================================================================
 /**
     Wraps a pointer to a null-terminated UTF-8 character string, and provides
     various methods to operate on the data.
     @see CharPointer_UTF16, CharPointer_UTF32
+
+    @tags{Core}
 */
-class CharPointer_UTF8
+class CharPointer_UTF8  final
 {
 public:
     typedef char CharType;
@@ -470,12 +473,10 @@ public:
     /** Parses this string as a 64-bit integer. */
     int64 getIntValue64() const noexcept
     {
-       #if JUCE_LINUX || JUCE_ANDROID || JUCE_MINGW
-        return atoll (data);
-       #elif JUCE_WINDOWS
+       #if JUCE_WINDOWS && ! JUCE_MINGW
         return _atoi64 (data);
        #else
-        return CharacterFunctions::getIntValue <int64, CharPointer_UTF8> (*this);
+        return atoll (data);
        #endif
     }
 
@@ -562,3 +563,5 @@ public:
 private:
     CharType* data;
 };
+
+} // namespace juce

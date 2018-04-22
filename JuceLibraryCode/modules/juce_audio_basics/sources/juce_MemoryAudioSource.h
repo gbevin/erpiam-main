@@ -20,12 +20,14 @@
   ==============================================================================
 */
 
-#pragma once
-
+namespace juce
+{
 
 //==============================================================================
 /**
     An AudioSource which takes some float audio data as an input.
+
+    @tags{Audio}
 */
 class JUCE_API MemoryAudioSource   : public AudioSource
 {
@@ -59,3 +61,5 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MemoryAudioSource)
 };
+
+} // namespace juce

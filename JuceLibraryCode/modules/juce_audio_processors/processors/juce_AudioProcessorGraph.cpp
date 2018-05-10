@@ -348,7 +348,7 @@ struct RenderSequenceBuilder
     }
 
     //==============================================================================
-    typedef AudioProcessorGraph::NodeID NodeID;
+    using NodeID = AudioProcessorGraph::NodeID;
 
     AudioProcessorGraph& graph;
     RenderSequence& sequence;
@@ -1045,7 +1045,6 @@ bool AudioProcessorGraph::isAnInputTo (Node& src, Node& dst, int recursionCheck)
     return false;
 }
 
-
 bool AudioProcessorGraph::canConnect (Node* source, int sourceChannel, Node* dest, int destChannel) const noexcept
 {
     bool sourceIsMIDI = sourceChannel == midiChannelIndex;
@@ -1181,8 +1180,8 @@ bool AudioProcessorGraph::removeIllegalConnections()
 //==============================================================================
 void AudioProcessorGraph::clearRenderingSequence()
 {
-    ScopedPointer<RenderSequenceFloat> oldSequenceF;
-    ScopedPointer<RenderSequenceDouble> oldSequenceD;
+    std::unique_ptr<RenderSequenceFloat> oldSequenceF;
+    std::unique_ptr<RenderSequenceDouble> oldSequenceD;
 
     {
         const ScopedLock sl (getCallbackLock());
@@ -1202,8 +1201,8 @@ bool AudioProcessorGraph::anyNodesNeedPreparing() const noexcept
 
 void AudioProcessorGraph::buildRenderingSequence()
 {
-    ScopedPointer<RenderSequenceFloat>  newSequenceF (new RenderSequenceFloat());
-    ScopedPointer<RenderSequenceDouble> newSequenceD (new RenderSequenceDouble());
+    std::unique_ptr<RenderSequenceFloat>  newSequenceF (new RenderSequenceFloat());
+    std::unique_ptr<RenderSequenceDouble> newSequenceD (new RenderSequenceDouble());
 
     {
         MessageManagerLock mml;
@@ -1212,8 +1211,11 @@ void AudioProcessorGraph::buildRenderingSequence()
         RenderSequenceBuilder<RenderSequenceDouble> builderD (*this, *newSequenceD);
     }
 
-    newSequenceF->prepareBuffers (getBlockSize());
-    newSequenceD->prepareBuffers (getBlockSize());
+    {
+        const ScopedLock sl (getCallbackLock());
+        newSequenceF->prepareBuffers (getBlockSize());
+        newSequenceD->prepareBuffers (getBlockSize());
+    }
 
     if (anyNodesNeedPreparing())
     {
@@ -1295,10 +1297,10 @@ bool AudioProcessorGraph::producesMidi() const                      { return tru
 void AudioProcessorGraph::getStateInformation (juce::MemoryBlock&)  {}
 void AudioProcessorGraph::setStateInformation (const void*, int)    {}
 
-template <typename Type>
-static void processBlockForBuffer (AudioBuffer<Type>& buffer, MidiBuffer& midiMessages,
+template <typename FloatType, typename SequenceType>
+static void processBlockForBuffer (AudioBuffer<FloatType>& buffer, MidiBuffer& midiMessages,
                                    AudioProcessorGraph& graph,
-                                   GraphRenderSequence<Type>* renderSequence,
+                                   std::unique_ptr<SequenceType>& renderSequence,
                                    Atomic<int>& isPrepared)
 {
     if (graph.isNonRealtime())

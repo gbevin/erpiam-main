@@ -159,6 +159,7 @@
 					06402D38E34BFB5A99A8D7F3, ); name = Source; sourceTree = "<group>"; };
 		C65E5532AB5C48218BCA645F = {isa = XCBuildConfiguration; buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
@@ -190,6 +191,7 @@
 				USE_HEADERMAP = NO; }; name = Debug; };
 		B9CC36BC6CB4A3F65FEAB6CC = {isa = XCBuildConfiguration; buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
@@ -336,7 +338,7 @@
 					40D7D2A94B30B8B9F36D89B1,
 					8CC4AD4EF5A5AE4488D8B449,
 					1F7F43BC0AFD5364C5BC44D8, ); buildRules = ( ); dependencies = (  ); name = "erpiam-main - App"; productName = "erpiam-main"; productReference = E4443618AD3D5B6594975D75; productType = "com.apple.product-type.application"; };
-		D565B6792F24ECCFEA0FCB25 = {isa = PBXProject; buildConfigurationList = DCAE15EA6914D87F766D173F; attributes = { LastUpgradeCheck = 0830; ORGANIZATIONNAME = "G.Bevin"; TargetAttributes = { 9AE6BFB01839696056ABCCCE = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; }; }; }; compatibilityVersion = "Xcode 3.2"; hasScannedForEncodings = 0; mainGroup = F392754712062404041B60BF; projectDirPath = ""; projectRoot = ""; targets = (9AE6BFB01839696056ABCCCE); };
+		D565B6792F24ECCFEA0FCB25 = {isa = PBXProject; buildConfigurationList = DCAE15EA6914D87F766D173F; attributes = { LastUpgradeCheck = 0930; ORGANIZATIONNAME = "G.Bevin"; TargetAttributes = { 9AE6BFB01839696056ABCCCE = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; }; }; }; compatibilityVersion = "Xcode 3.2"; hasScannedForEncodings = 0; mainGroup = F392754712062404041B60BF; projectDirPath = ""; projectRoot = ""; targets = (9AE6BFB01839696056ABCCCE); };
 	};
 	rootObject = D565B6792F24ECCFEA0FCB25;
 }

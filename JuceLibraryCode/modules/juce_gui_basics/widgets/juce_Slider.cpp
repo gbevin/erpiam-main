@@ -113,7 +113,7 @@ public:
         {
             int v = std::abs (roundToInt (normRange.interval * 10000000));
 
-            while ((v % 10) == 0)
+            while ((v % 10) == 0 && numDecimalPlaces > 0)
             {
                 --numDecimalPlaces;
                 v /= 10;
@@ -136,7 +136,8 @@ public:
 
     void setRange (double newMin, double newMax, double newInt)
     {
-        normRange = NormalisableRange<double> (newMin, newMax, newInt);
+        normRange = NormalisableRange<double> (newMin, newMax, newInt,
+                                               normRange.skew, normRange.symmetricSkew);
         updateRange();
     }
 
@@ -1241,7 +1242,7 @@ public:
     int pixelsForFullDragExtent = 250;
     Time lastMouseWheelTime;
     Rectangle<int> sliderRect;
-    ScopedPointer<DragInProgress> currentDrag;
+    std::unique_ptr<DragInProgress> currentDrag;
 
     TextEntryBoxPosition textBoxPos;
     String textSuffix;
@@ -1267,8 +1268,8 @@ public:
     int popupHoverTimeout = 2000;
     double lastPopupDismissal = 0.0;
 
-    ScopedPointer<Label> valueBox;
-    ScopedPointer<Button> incButton, decButton;
+    std::unique_ptr<Label> valueBox;
+    std::unique_ptr<Button> incButton, decButton;
 
     //==============================================================================
     struct PopupDisplayComponent  : public BubbleComponent,
@@ -1322,7 +1323,7 @@ public:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PopupDisplayComponent)
     };
 
-    ScopedPointer<PopupDisplayComponent> popupDisplay;
+    std::unique_ptr<PopupDisplayComponent> popupDisplay;
     Component* parentForPopupDisplay = nullptr;
 
     //==============================================================================

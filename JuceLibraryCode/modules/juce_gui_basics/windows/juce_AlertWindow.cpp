@@ -523,7 +523,7 @@ bool AlertWindow::keyPressed (const KeyPress& key)
         }
     }
 
-    if (key.isKeyCode (KeyPress::escapeKey) && escapeKeyCancels && buttons.size() == 0)
+    if (key.isKeyCode (KeyPress::escapeKey) && escapeKeyCancels)
     {
         exitModalState (0);
         return true;
@@ -584,8 +584,8 @@ private:
         auto& lf = associatedComponent != nullptr ? associatedComponent->getLookAndFeel()
                                                   : LookAndFeel::getDefaultLookAndFeel();
 
-        ScopedPointer<Component> alertBox (lf.createAlertWindow (title, message, button1, button2, button3,
-                                                                 iconType, numButtons, associatedComponent));
+        std::unique_ptr<Component> alertBox (lf.createAlertWindow (title, message, button1, button2, button3,
+                                                                   iconType, numButtons, associatedComponent));
 
         jassert (alertBox != nullptr); // you have to return one of these!
 

@@ -3,7 +3,7 @@
 <JUCERPROJECT id="Lti8Df" name="erpiam-main" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" projectType="guiapp" version="0.2.0"
               bundleIdentifier="org.expressiveness.erpiam" includeBinaryInAppConfig="1"
-              cppLanguageStandard="14" jucerVersion="5.3.1" companyName="G.Bevin"
+              cppLanguageStandard="14" jucerVersion="5.3.2" companyName="G.Bevin"
               companyWebsite="http://expressiveness.org" companyEmail="">
   <MAINGROUP id="L38QxS" name="erpiam-main">
     <GROUP id="{C1344BD3-18CC-8012-1DC8-7E008DB01D3A}" name="Source">
@@ -93,4 +93,7 @@
   </MODULES>
   <JUCEOPTIONS JUCE_ALSA="1" JUCE_USE_CURL="1" JUCE_USE_XCURSOR="1" JUCE_WEB_BROWSER="0"
                JUCE_ENABLE_LIVE_CONSTANT_EDITOR="0"/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>
